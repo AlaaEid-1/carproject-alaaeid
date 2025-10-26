@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import CarCard from '../components/CarCard';
@@ -12,7 +12,7 @@ import { ChevronDown, Car as CarIcon } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Home() {
+function Home() {
   const searchParams = useSearchParams();
 
   const [filters, setFilters] = useState({
@@ -311,5 +311,13 @@ export default function Home() {
 
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Home />
+    </Suspense>
   );
 }

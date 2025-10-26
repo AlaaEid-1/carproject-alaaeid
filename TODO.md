@@ -1,7 +1,3 @@
-# Chat Improvements TODO
+# TODO: Fix Build Error by Removing OpenAI Dependency
 
-- [x] Add auto-scroll to bottom on new messages
-- [x] Implement typing indicators
-- [x] Improve message formatting (avatars/colors, better timestamps, message bubbles)
-- [x] Add message persistence using localStorage
-- [x] Enhance UI with animations and modern design
+- [x] Modify `app/api/chatbot/route.ts` to remove OpenAI import and usage, replacing with a static response: "Thank you for your message. Our team will get back to you soon."
