@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     let query: any = {};
 
-    if (type && type !== 'undefined') query.type = type;
+    if (type && type !== 'undefined') query.type = { $regex: new RegExp(`^${type}$`, 'i') };
     if (year) query.year = parseInt(year);
     if (priceMin) query.price = { ...query.price, $gte: parseInt(priceMin) };
     if (priceMax) query.price = { ...query.price, $lte: parseInt(priceMax) };
