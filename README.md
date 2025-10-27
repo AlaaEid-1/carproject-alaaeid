@@ -150,7 +150,7 @@ Get all reviews.
 Get reviews for a specific car.
 - **Method**: GET
 - **Test Links**:
-  - [Get reviews for car ID 68fe205dd0510a91eaf17704](https://carproject-alaaeid.vercel.app/api/reviews/68fe205dd0510a91eaf17704)
+  - [Get reviews for car ID 68ff07e1c8a56b92d8642067](https://carproject-alaaeid.vercel.app/api/reviews/68ff07e1c8a56b92d8642067)
   - [Get reviews for car ID 68ff07e1c8a56b92d8642061](https://carproject-alaaeid.vercel.app/api/reviews/68ff07e1c8a56b92d8642061)
 - **Response**: JSON array of reviews for the car
 - **Status Codes**: 200 (success), 404 (not found), 500 (server error)
