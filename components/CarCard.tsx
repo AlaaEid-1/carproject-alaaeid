@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Car } from '../types';
 import { Heart, Star, Eye, ImageOff } from 'lucide-react';
 
@@ -10,17 +11,22 @@ interface CarCardProps {
 }
 
 export default function CarCard({ car, showActions = true }: CarCardProps) {
+  const { data: session } = useSession();
   const [imageError, setImageError] = useState(false);
   const [isBookingTestDrive, setIsBookingTestDrive] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const handleBookTestDrive = async (carId: string) => {
+    if (!session) {
+      alert('Please sign in to book a test drive.');
+      return;
+    }
+
     setIsBookingTestDrive(true);
     try {
-      // In a real app, you'd collect more information like preferred date/time
       const contactInfo = {
-        name: 'Guest User', // This would come from user profile
-        email: 'guest@example.com', // This would come from user profile
+        name: session.user?.name || 'User',
+        email: session.user?.email || '',
         phone: '',
       };
 
@@ -30,7 +36,6 @@ export default function CarCard({ car, showActions = true }: CarCardProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: 'guest', // In a real app, this would come from authentication
           carId,
           contactInfo,
           notes: 'Booked from car card',
@@ -42,7 +47,8 @@ export default function CarCard({ car, showActions = true }: CarCardProps) {
       } else if (response.status === 409) {
         alert('You have already booked a test drive for this car.');
       } else {
-        throw new Error('Failed to book test drive');
+        const errorData = await response.json().catch(() => ({}));
+        alert(errorData.error || 'Failed to book test drive. Please try again.');
       }
     } catch (error) {
       console.error('Error booking test drive:', error);
@@ -53,12 +59,17 @@ export default function CarCard({ car, showActions = true }: CarCardProps) {
   };
 
   const handleAddToFavorites = async (carId: string) => {
+    if (!session) {
+      alert('Please sign in to add favorites.');
+      return;
+    }
+
     setIsFavorited(true); // Set immediately for better UX
     try {
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: 'guest', carId }),
+        body: JSON.stringify({ carId }),
       });
 
       if (response.ok) {
@@ -66,6 +77,9 @@ export default function CarCard({ car, showActions = true }: CarCardProps) {
       } else if (response.status === 409) {
         alert('Car is already in your favorites!');
         setIsFavorited(false); // Revert if already favorited
+      } else if (response.status === 401) {
+        alert('Please sign in to add favorites.');
+        setIsFavorited(false);
       } else {
         throw new Error('Failed to add to favorites');
       }

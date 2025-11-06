@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import dbConnect from '../../../lib/mongodb';
 import Car from '../../../models/Car';
+import { authOptions } from '../../../lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -48,9 +50,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user?.role !== 'admin') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await dbConnect();
 
     const body = await request.json();
+    // Set price to pricePerDay if not provided
+    if (!body.price && body.pricePerDay) {
+      body.price = body.pricePerDay;
+    }
     const car = new Car(body);
     await car.save();
 

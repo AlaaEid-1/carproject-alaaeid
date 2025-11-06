@@ -1,12 +1,6 @@
 # AlaaExplorion
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit-blue)](https://carproject-alaaeid.vercel.app/)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/AlaaEid-1/carproject-alaaeid)
-
 AlaaExplorion is a modern, full-stack web application for exploring and discovering cars. Built with Next.js and TypeScript, it offers a seamless experience for browsing, searching, and managing favorite vehicles, along with features like test drive scheduling and an integrated chatbot.
-
-**Live Site:** [https://carproject-alaaeid.vercel.app/](https://carproject-alaaeid.vercel.app/)  
-**GitHub Repository:** [https://github.com/AlaaEid-1/carproject-alaaeid](https://github.com/AlaaEid-1/carproject-alaaeid)
 
 ## Features
 
@@ -66,7 +60,7 @@ AlaaExplorion is a modern, full-stack web application for exploring and discover
 
 ## API Endpoints
 
-The application provides RESTful API endpoints for managing cars, favorites, reviews, test drives, and chatbot interactions. All endpoints are accessible at `http://localhost:3000/api/` when running locally, or at `https://carproject-alaaeid.vercel.app/api/` on the live site.
+The application provides RESTful API endpoints for managing cars, favorites, reviews, test drives, and chatbot interactions. All endpoints are accessible at `http://localhost:3000/api/` when running locally.
 
 ### Cars API
 
@@ -81,14 +75,7 @@ Retrieve all cars with optional filtering (type, year, price range, search query
   - `search` (optional): Search by car name or brand
   - `sortBy` (optional): Sort field (name, price, year)
   - `sortOrder` (optional): Sort order (asc, desc)
-- **Test Links**:
-  - [All cars](https://carproject-alaaeid.vercel.app/api/cars)
-  - [Sedans only](https://carproject-alaaeid.vercel.app/api/cars?type=sedan)
-  - [SUVs only](https://carproject-alaaeid.vercel.app/api/cars?type=suv)
-  - [Search Toyota](https://carproject-alaaeid.vercel.app/api/cars?search=toyota)
-  - [Price range 20000-50000](https://carproject-alaaeid.vercel.app/api/cars?priceMin=20000&priceMax=50000)
-  - [Sort by price descending](https://carproject-alaaeid.vercel.app/api/cars?sortBy=price&sortOrder=desc)
-  - [Specific car by ID](https://carproject-alaaeid.vercel.app/api/cars/68ff07e1c8a56b92d8642061)
+- **Test Links**: Use localhost:3000/api/cars with appropriate parameters
 - **Response**: JSON array of car objects
 - **Status Codes**: 200 (success), 500 (server error)
 
@@ -98,7 +85,7 @@ Create a new car (admin functionality).
 - **Body**: JSON object with car data (name, brand, type, year, price, images, etc.)
 - **Test**: Use tools like Postman or curl:
   ```bash
-  curl -X POST https://carproject-alaaeid.vercel.app/api/cars \
+  curl -X POST http://localhost:3000/api/cars \
     -H "Content-Type: application/json" \
     -d '{"name":"Test Car","brand":"Test Brand","type":"sedan","year":2023,"price":30000}'
   ```
@@ -112,8 +99,7 @@ Get user's favorite cars.
 - **Method**: GET
 - **Parameters**:
   - `userId` (optional): Filter by user ID
-- **Test Links**:
-  - [Get favorites for user 'guest'](https://carproject-alaaeid.vercel.app/api/favorites?userId=guest)
+- **Test Links**: Use localhost:3000/api/favorites with appropriate parameters
 - **Response**: JSON array of favorite car objects
 - **Status Codes**: 200 (success), 500 (server error)
 
@@ -123,7 +109,7 @@ Add a car to favorites.
 - **Body**: JSON object with carId
 - **Test**: Use curl:
   ```bash
-  curl -X POST https://carproject-alaaeid.vercel.app/api/favorites \
+  curl -X POST http://localhost:3000/api/favorites \
     -H "Content-Type: application/json" \
     -d '{"carId":"507f1f77bcf86cd799439011"}'
   ```
@@ -133,7 +119,7 @@ Add a car to favorites.
 #### DELETE /api/favorites/[id]
 Remove a car from favorites.
 - **Method**: DELETE
-- **Test Link**: [Delete favorite](https://carproject-alaaeid.vercel.app/api/favorites/507f1f77bcf86cd799439011) (replace with actual ID)
+- **Test Link**: Use http://localhost:3000/api/favorites/[id] (replace with actual ID)
 - **Response**: Success message
 - **Status Codes**: 200 (success), 404 (not found), 500 (server error)
 
@@ -142,16 +128,20 @@ Remove a car from favorites.
 #### GET /api/reviews
 Get all reviews.
 - **Method**: GET
-- **Test Link**: [Get all reviews](https://carproject-alaaeid.vercel.app/api/reviews)
+- **Test Link**: Use http://localhost:3000/api/reviews
 - **Response**: JSON array of review objects
 - **Status Codes**: 200 (success), 500 (server error)
 
 #### GET /api/reviews/[carId]
 Get reviews for a specific car.
 - **Method**: GET
+<<<<<<< HEAD
 - **Test Links**:
   - [Get reviews for car ID 68ff07e1c8a56b92d86420a5](https://carproject-alaaeid.vercel.app/api/reviews/68ff07e1c8a56b92d86420a5)
   - [Get reviews for car ID 68ff07e1c8a56b92d8642061](https://carproject-alaaeid.vercel.app/api/reviews/68ff07e1c8a56b92d8642061)
+=======
+- **Test Links**: Use http://localhost:3000/api/reviews/[carId] (replace with actual car ID)
+>>>>>>> 94ec56c (add admin dashboard)
 - **Response**: JSON array of reviews for the car
 - **Status Codes**: 200 (success), 404 (not found), 500 (server error)
 
@@ -161,7 +151,7 @@ Submit a new review.
 - **Body**: JSON object with review data (carId, user, rating, comment, etc.)
 - **Test**: Use curl:
   ```bash
-  curl -X POST https://carproject-alaaeid.vercel.app/api/reviews \
+  curl -X POST http://localhost:3000/api/reviews \
     -H "Content-Type: application/json" \
     -d '{"carId":"507f1f77bcf86cd799439011","user":"Test User","rating":5,"comment":"Great car!"}'
   ```
@@ -175,8 +165,7 @@ Get user's test drive bookings.
 - **Method**: GET
 - **Parameters**:
   - `userId` (optional): Filter by user ID
-- **Test Links**:
-  - [Get test drives for user 'guest'](https://carproject-alaaeid.vercel.app/api/test-drives?userId=guest)
+- **Test Links**: Use http://localhost:3000/api/test-drives with appropriate parameters
 - **Response**: JSON array of test drive objects
 - **Status Codes**: 200 (success), 500 (server error)
 
@@ -186,7 +175,7 @@ Schedule a new test drive.
 - **Body**: JSON object with booking data (carId, user, date, time, etc.)
 - **Test**: Use curl:
   ```bash
-  curl -X POST https://carproject-alaaeid.vercel.app/api/test-drives \
+  curl -X POST http://localhost:3000/api/test-drives \
     -H "Content-Type: application/json" \
     -d '{"carId":"507f1f77bcf86cd799439011","user":"Test User","date":"2024-01-15","time":"10:00"}'
   ```
@@ -201,7 +190,7 @@ Send a message to the chatbot.
 - **Body**: JSON object with message and user
 - **Test**: Use curl:
   ```bash
-  curl -X POST https://carproject-alaaeid.vercel.app/api/chatbot \
+  curl -X POST http://localhost:3000/api/chatbot \
     -H "Content-Type: application/json" \
     -d '{"message":"Hello, can you help me?","user":"TestUser"}'
   ```
@@ -226,7 +215,7 @@ Send a message to the chatbot.
 
 4. **Using JavaScript/fetch**: Example for testing GET request:
    ```javascript
-   fetch('https://carproject-alaaeid.vercel.app/api/cars')
+   fetch('http://localhost:3000/api/cars')
      .then(response => response.json())
      .then(data => console.log(data));
    ```
@@ -238,9 +227,9 @@ Send a message to the chatbot.
 - **Error Handling**: Test with malformed requests, missing parameters
 - **Performance**: Test with multiple concurrent requests
 
-### Live Testing
+### Local Testing
 
-All test links use the live production site at `https://carproject-alaaeid.vercel.app/`. For local testing, replace the domain with `http://localhost:3000` when running the development server.
+All test links use the local development server at `http://localhost:3000` when running the development server.
 
 ## Usage
 

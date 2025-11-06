@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const TestDriveSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, // Could be user email or session ID
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   carId: { type: mongoose.Schema.Types.ObjectId, ref: 'Car', required: true },
   preferredDate: { type: Date },
   preferredTime: { type: String },
@@ -20,7 +20,6 @@ const TestDriveSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-// Compound index to prevent duplicate bookings for same user/car
-TestDriveSchema.index({ userId: 1, carId: 1 }, { unique: true });
+// Note: Unique constraint handled in code to avoid index conflicts
 
 export default mongoose.models.TestDrive || mongoose.model('TestDrive', TestDriveSchema);

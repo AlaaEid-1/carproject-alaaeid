@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import Image from 'next/image';
-import { Car, Review } from '../../../types';
-import { Star, Heart, Calendar, Gauge, Fuel, Palette, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Car as CarType, Review } from '../../../types';
+import { Star, Heart, Calendar, Gauge, Fuel, Palette, ChevronLeft, ChevronRight, ArrowLeft, Car as CarIcon } from 'lucide-react';
 import Link from 'next/link';
 import CarCard from '../../../components/CarCard';
 
@@ -15,7 +16,7 @@ export default function CarDetails() {
   const params = useParams();
   const id = params.id as string;
 
-  const { data: car, error, isLoading } = useSWR<Car>(
+  const { data: car, error, isLoading } = useSWR<CarType>(
     id ? `/api/cars/${id}` : null,
     fetcher
   );
@@ -25,7 +26,7 @@ export default function CarDetails() {
     fetcher
   );
 
-  const { data: relatedCars, error: relatedError, isLoading: relatedLoading } = useSWR<Car[]>(
+  const { data: relatedCars, error: relatedError, isLoading: relatedLoading } = useSWR<CarType[]>(
     id && car ? `/api/cars?type=${car.type}&limit=4&exclude=${id}` : null,
     fetcher
   );
@@ -34,16 +35,30 @@ export default function CarDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [userId, setUserId] = useState('guest');
+  const { data: session } = useSession();
   const [isBookingTestDrive, setIsBookingTestDrive] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleAddToFavorites = async () => {
+    if (!session) {
+      alert('Please sign in to add favorites.');
+      return;
+    }
+
+    const carId = id;
+
+    console.log("carId:", carId);
+
+    if (!carId) {
+      console.error("Missing carId", { carId });
+      alert("Car ID is required.");
+      return;
+    }
+
     try {
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, carId: id }),
+        body: JSON.stringify({ carId }),
       });
 
       if (response.ok) {
@@ -63,11 +78,15 @@ export default function CarDetails() {
   const handleBookTestDrive = async () => {
     setIsBookingTestDrive(true);
     try {
-      const contactInfo = { name: 'Guest User', email: 'guest@example.com', phone: '' };
+      const contactInfo = {
+        name: session?.user?.name || 'Guest User',
+        email: session?.user?.email || 'guest@example.com',
+        phone: ''
+      };
       const response = await fetch('/api/test-drives', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, carId: id, contactInfo, notes: 'Booked from car details page' }),
+        body: JSON.stringify({ carId: id, contactInfo, notes: 'Booked from car details page' }),
       });
 
       if (response.ok) {
@@ -75,7 +94,8 @@ export default function CarDetails() {
       } else if (response.status === 409) {
         alert('You have already booked a test drive for this car.');
       } else {
-        throw new Error('Failed to book test drive');
+        const errorData = await response.json().catch(() => ({}));
+        alert(errorData.error || 'Failed to book test drive. Please try again.');
       }
     } catch (error) {
       console.error('Error booking test drive:', error);
@@ -84,6 +104,10 @@ export default function CarDetails() {
       setIsBookingTestDrive(false);
     }
   };
+
+
+
+
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -273,13 +297,29 @@ export default function CarDetails() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4">
-              <button onClick={handleBookTestDrive} disabled={isBookingTestDrive}
-                className="flex-1 bg-gradient-to-r from-purple-500 to-purple-700 text-white py-4 px-6 rounded-xl hover:from-purple-600 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 font-semibold text-lg shadow-lg">
-                {isBookingTestDrive ? 'Booking...' : 'Book Test Drive'}
-              </button>
+            <div className="flex flex-col gap-4">
+              {session ? (
+                <>
+                  <button onClick={handleBookTestDrive} disabled={isBookingTestDrive}
+                    className="flex-1 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#C084FC] text-white py-4 px-6 rounded-xl hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#A855F7] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 font-semibold text-lg shadow-lg hover:shadow-purple-500/50 border border-purple-400/30">
+                    {isBookingTestDrive ? 'Booking...' : 'Book Test Drive'}
+                  </button>
+                  <Link href={`/bookings?carId=${id}`}
+                    className="flex-1 bg-gradient-to-r from-[#C084FC] via-[#DDD6FE] to-[#F3E8FF] text-white py-4 px-6 rounded-xl hover:from-[#A855F7] hover:via-[#C084FC] hover:to-[#DDD6FE] transition-all duration-300 transform hover:scale-105 font-semibold text-lg shadow-lg hover:shadow-purple-500/50 border border-purple-400/30 flex items-center justify-center gap-2">
+                    <CarIcon className="h-5 w-5" />
+                    Rent Car
+                  </Link>
+                </>
+              ) : (
+                <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-yellow-800 dark:text-yellow-200 font-medium mb-2">Please sign in to book or rent this car</p>
+                  <Link href="/auth/signin" className="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                    Sign In
+                  </Link>
+                </div>
+              )}
               <button onClick={handleAddToFavorites}
-                className="px-6 py-4 bg-gradient-to-r from-purple-100 to-purple-300 text-purple-700 rounded-xl hover:from-purple-200 hover:to-purple-400 transition-all duration-300 transform hover:scale-105 font-semibold">
+                className="px-6 py-4 bg-gradient-to-r from-[#F3E8FF] via-[#E9D5FF] to-[#DDD6FE] text-[#7C3AED] rounded-xl hover:from-[#E9D5FF] hover:via-[#DDD6FE] hover:to-[#C4B5FD] transition-all duration-300 transform hover:scale-105 font-semibold shadow-lg hover:shadow-purple-300/50 border border-purple-300/50">
                 Add to Favorites
               </button>
             </div>
@@ -364,6 +404,8 @@ export default function CarDetails() {
             </div>
           </div>
         )}
+
+
       </div>
     </div>
   );

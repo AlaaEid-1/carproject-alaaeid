@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { Car, Calendar, ArrowLeft, Phone, Mail, User, Trash2 } from 'lucide-react';
 import { Car as CarType } from '../../types';
 import Header from '../../components/Header';
+import { useSession } from 'next-auth/react';
+import { formatDate } from '../../lib/dateUtils';
 
 interface TestDrive {
   _id: string;
@@ -25,10 +27,10 @@ interface TestDrive {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function TestDrivesPage() {
-  const [userId, setUserId] = useState('guest'); // In a real app, this would come from authentication
+  const { data: session } = useSession();
 
   const { data: testDrives, error, isLoading, mutate } = useSWR<TestDrive[]>(
-    `/api/test-drives?userId=${userId}`,
+    session ? `/api/test-drives` : null,
     fetcher
   );
 
@@ -170,7 +172,7 @@ export default function TestDrivesPage() {
 
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Booked on {new Date(testDrive.createdAt).toLocaleDateString()}
+                      Booked on {formatDate(testDrive.createdAt)}
                     </div>
                     <div className="flex gap-2">
                       <button

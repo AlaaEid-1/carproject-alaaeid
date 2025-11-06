@@ -1,20 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import mongoose from 'mongoose';
 import dbConnect from '../../../lib/mongodb';
 import TestDrive from '../../../models/TestDrive';
 import Car from '../../../models/Car';
+import User from '../../../models/User';
+import { authOptions } from '../../../lib/auth';
+import { Session } from 'next-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    await dbConnect();
-
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const testDrives = await TestDrive.find({ userId }).populate('carId');
+    await dbConnect();
+
+    // Get user ObjectId from email
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const testDrives = await TestDrive.find({ userId: user._id }).populate('carId');
     // Filter out test drives where carId is null (car was deleted)
     const validTestDrives = testDrives.filter(td => td.carId);
     return NextResponse.json(validTestDrives);
@@ -26,9 +35,24 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST /api/test-drives called');
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     await dbConnect();
 
-    const { userId, carId, preferredDate, preferredTime, contactInfo, notes } = await request.json();
+    const { carId, preferredDate, preferredTime, contactInfo, notes } = await request.json();
+
+    // Get user ObjectId from email
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const userId = user._id;
+    console.log('Request data:', { userId, carId, contactInfo });
 
     if (!userId || !carId || !contactInfo?.name || !contactInfo?.email) {
       return NextResponse.json({
@@ -36,8 +60,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Validate carId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(carId)) {
+      console.log('Invalid carId format');
+      return NextResponse.json({ error: 'Invalid Car ID format' }, { status: 400 });
+    }
+
     // Check if test drive already exists for this user/car combination
     const existingTestDrive = await TestDrive.findOne({ userId, carId });
+    console.log('Existing test drive:', existingTestDrive);
     if (existingTestDrive) {
       return NextResponse.json({ error: 'Test drive already booked for this car' }, { status: 409 });
     }
@@ -52,11 +83,12 @@ export async function POST(request: NextRequest) {
     });
 
     await testDrive.save();
+    console.log('Test drive saved:', testDrive);
 
     return NextResponse.json(testDrive, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to book test drive' }, { status: 500 });
+    console.error('Error booking test drive:', error);
+    return NextResponse.json({ error: `Failed to book test drive: ${error instanceof Error ? error.message : 'Unknown error'}` }, { status: 500 });
   }
 }
 

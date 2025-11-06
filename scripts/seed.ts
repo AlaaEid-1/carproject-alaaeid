@@ -9,9 +9,10 @@ const mockCars = [
     "id": 1,
     "brand": "Tesla",
     "name": "Model S Plaid",
-    "type": "Sedan",
+    "type": "sedan",
     "year": 2023,
     "price": 89990,
+    "pricePerDay": 150,
     "engine": "Tri-Motor Electric",
     "fuel": "Electric",
     "colors": ["Black", "Red", "Blue"],
@@ -47,9 +48,10 @@ const mockCars = [
     "id": 2,
     "brand": "Toyota",
     "name": "Camry",
-    "type": "Sedan",
+    "type": "sedan",
     "year": 2023,
     "price": 25000,
+    "pricePerDay": 40,
     "engine": "2.5L 4-Cylinder",
     "fuel": "Gasoline",
     "colors": [ "Black", "White", "Blue"],
@@ -85,9 +87,10 @@ const mockCars = [
     "id": 3,
     "brand": "Honda",
     "name": "CR-V",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 28000,
+    "pricePerDay": 45,
     "engine": "1.5L Turbo 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["Red","White", "Gray", "Blue"],
@@ -124,9 +127,10 @@ const mockCars = [
     "id": 4,
     "brand": "Ford",
     "name": "Mustang",
-    "type": "Coupe",
+    "type": "coupe",
     "year": 2023,
     "price": 35000,
+    "pricePerDay": 55,
     "engine": "2.3L EcoBoost 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["Red", "Orange","Blue"],
@@ -162,9 +166,10 @@ const mockCars = [
     "id": 5,
     "brand": "BMW",
     "name": "X5",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 55000,
+    "pricePerDay": 90,
     "engine": "3.0L Turbo I6",
     "fuel": "Gasoline",
     "colors": ["Black", "White","Green"],
@@ -200,9 +205,10 @@ const mockCars = [
     "id": 6,
     "brand": "Chevrolet",
     "name": "Silverado",
-    "type": "Truck",
+    "type": "truck",
     "year": 2023,
     "price": 38000,
+    "pricePerDay": 60,
     "engine": "5.3L V8",
     "fuel": "Gasoline",
     "colors": ["Red", "Black", "White", "Blue"],
@@ -239,9 +245,10 @@ const mockCars = [
     "id": 7,
     "brand": "Mazda",
     "name": "CX-5",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 27000,
+    "pricePerDay": 45,
     "engine": "2.5L 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["Red", " Black", " White", "Red"],
@@ -279,9 +286,10 @@ const mockCars = [
     "id": 8,
     "brand": "Audi",
     "name": "A4",
-    "type": "Sedan",
+    "type": "sedan",
     "year": 2023,
     "price": 42000,
+    "pricePerDay": 70,
     "engine": "2.0L Turbo 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["White", "Black"," Red"],
@@ -317,9 +325,10 @@ const mockCars = [
     "id": 9,
     "brand": "Jeep",
     "name": "Wrangler",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 32000,
+    "pricePerDay": 50,
     "engine": "3.6L V6",
     "fuel": "Gasoline",
     "colors": ["Briht White", "Black",  " Blue"],
@@ -355,9 +364,10 @@ const mockCars = [
     "id": 10,
     "brand": "Mercedes-Benz",
     "name": "C-Class",
-    "type": "Sedan",
+    "type": "sedan",
     "year": 2023,
     "price": 48000,
+    "pricePerDay": 80,
     "engine": "2.0L Turbo 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["Black", "White", " Blue"],
@@ -393,9 +403,10 @@ const mockCars = [
     "id": 11,
     "brand": "Nissan",
     "name": "Altima",
-    "type": "Sedan",
+    "type": "sedan",
     "year": 2023,
     "price": 26000,
+    "pricePerDay": 40,
     "engine": "2.5L 4-Cylinder",
     "fuel": "Gasoline",
     "colors": [" White", "black", " red"],
@@ -431,9 +442,10 @@ const mockCars = [
     "id": 12,
     "brand": "Subaru",
     "name": "Outback",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 29000,
+    "pricePerDay": 45,
     "engine": "2.5L Boxer 4-Cylinder",
     "fuel": "Gasoline",
     "colors": [ " Silver", "Crimson Red Pearl", "Red"],
@@ -469,9 +481,10 @@ const mockCars = [
     "id": 13,
     "brand": "Volkswagen",
     "name": "Golf",
-    "type": "Hatchback",
+    "type": "hatchback",
     "year": 2023,
     "price": 24000,
+    "pricePerDay": 40,
     "engine": "1.4L Turbo 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["White"," Blue", " Red", "Black"],
@@ -509,9 +522,10 @@ const mockCars = [
     "id": 14,
     "brand": "Hyundai",
     "name": "Tucson",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 27000,
+    "pricePerDay": 45,
     "engine": "2.5L 4-Cylinder",
     "fuel": "Gasoline",
     "colors": [" Black", "White", " Red"],
@@ -547,9 +561,10 @@ const mockCars = [
     "id": 15,
     "brand": "Kia",
     "name": "Sportage",
-    "type": "SUV",
+    "type": "suv",
     "year": 2022,
     "price": 25000,
+    "pricePerDay": 40,
     "engine": "2.4L 4-Cylinder",
     "fuel": "Gasoline",
     "colors": ["Black", " White","Green"],
@@ -585,9 +600,10 @@ const mockCars = [
     "id": 16,
     "brand": "Lexus",
     "name": "RX",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 55000,
+    "pricePerDay": 90,
     "engine": "3.5L V6 Hybrid",
     "fuel": "Hybrid",
     "colors": ["Selver", "Orange", "Green", "Blue"],
@@ -625,9 +641,10 @@ const mockCars = [
     "id": 17,
     "brand": "Porsche",
     "name": "911",
-    "type": "Coupe",
+    "type": "coupe",
     "year": 2023,
     "price": 120000,
+    "pricePerDay": 200,
     "engine": "3.0L Turbo Flat-6",
     "fuel": "Gasoline",
     "colors": [ "Black", " White", "Blue", "green"],
@@ -665,9 +682,10 @@ const mockCars = [
     "id": 18,
     "brand": "Ferrari",
     "name": "488",
-    "type": "Coupe",
+    "type": "coupe",
     "year": 2022,
     "price": 330000,
+    "pricePerDay": 550,
     "engine": "3.9L Twin-Turbo V8",
     "fuel": "Gasoline",
     "colors": [" Red "],
@@ -701,9 +719,10 @@ const mockCars = [
     "id": 19,
     "brand": "Lamborghini",
     "name": "Huracan",
-    "type": "Coupe",
+    "type": "coupe",
     "year": 2023,
     "price": 260000,
+    "pricePerDay": 430,
     "engine": "5.2L V10",
     "fuel": "Gasoline",
     "colors": ["Blue", "Black", "Yellow"],
@@ -739,9 +758,10 @@ const mockCars = [
     "id": 20,
     "brand": "Volvo",
     "name": "XC90",
-    "type": "SUV",
+    "type": "suv",
     "year": 2023,
     "price": 50000,
+    "pricePerDay": 80,
     "engine": "2.0L Turbo 4-Cylinder",
     "fuel": "Gasoline",
     "colors": [ " White", "Blue"],
@@ -775,22 +795,22 @@ const mockCars = [
 ];
 
 async function seedDatabase() {
-  try {
-    await dbConnect();
-    console.log('Connected to MongoDB');
+  try {
+    await dbConnect();
+    console.log('Connected to MongoDB');
 
-    await Car.deleteMany({});
-    console.log('Cleared existing cars');
+    await Car.deleteMany({});
+    console.log('Cleared existing cars');
 
-    await Car.insertMany(mockCars);
-    console.log('Inserted mock cars');
+    await Car.insertMany(mockCars);
+    console.log('Inserted mock cars');
 
-    console.log('Database seeded successfully');
-    process.exit(0);
-  } catch (error) {
-    console.error('Error seeding database:', error);
-    process.exit(1);
-  }
+    console.log('Database seeded successfully');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    process.exit(1);
+  }
 }
 
 seedDatabase();

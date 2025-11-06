@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Car, Heart, ArrowLeft, Trash2 } from 'lucide-react';
+import { Car, Heart, ArrowLeft, Trash2, LogIn } from 'lucide-react';
 import { Car as CarType } from '../../types';
 import Header from '../../components/Header';
 
@@ -18,17 +19,19 @@ interface Favorite {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function FavoritesPage() {
-  const [userId, setUserId] = useState('guest'); // In a real app, this would come from authentication
+  const { data: session, status } = useSession();
 
   const { data: favorites, error, isLoading, mutate } = useSWR<Favorite[]>(
-    `/api/favorites?userId=${userId}`,
+    status === 'authenticated' ? '/api/favorites' : null,
     fetcher
   );
 
-  const handleRemoveFavorite = async (favoriteId: string) => {
+  const handleRemoveFavorite = async (carId: string) => {
     try {
-      const response = await fetch(`/api/favorites/${favoriteId}`, {
+      const response = await fetch(`/api/favorites/${carId}`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: session?.user?.email }),
       });
 
       if (response.ok) {
@@ -57,6 +60,36 @@ export default function FavoritesPage() {
       <div className="min-h-screen bg-gradient-to-br from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE] dark:from-[#1F1F2E] dark:via-[#2B2B3D] dark:to-[#1F1F2E] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 bg-red-50 dark:bg-red-900/20 p-6 rounded-lg">Failed to load favorites.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE] dark:from-[#1F1F2E] dark:via-[#2B2B3D] dark:to-[#1F1F2E] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C084FC] mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE] dark:from-[#1F1F2E] dark:via-[#2B2B3D] dark:to-[#1F1F2E] flex items-center justify-center">
+        <div className="text-center py-16">
+          <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Login Required</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">Please sign in to view your favorites.</p>
+          <Link
+            href="/auth/signin"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C084FC] to-[#A78BFA] text-white px-6 py-3 rounded-xl hover:from-[#A78BFA] hover:to-[#8B5CF6] transition-all duration-300 transform hover:scale-105 font-semibold"
+          >
+            <LogIn className="h-5 w-5" />
+            Sign In
+          </Link>
         </div>
       </div>
     );
@@ -108,7 +141,7 @@ export default function FavoritesPage() {
                     className="object-cover"
                   />
                   <button
-                    onClick={() => handleRemoveFavorite(favorite._id)}
+                    onClick={() => favorite.carId?._id && handleRemoveFavorite(favorite.carId._id)}
                     className="absolute top-3 right-3 bg-white/90 dark:bg-[#1F1F2E]/90 p-2 rounded-full hover:bg-white dark:hover:bg-[#1F1F2E] transition-all duration-300"
                   >
                     <Trash2 className="h-4 w-4 text-red-500" />

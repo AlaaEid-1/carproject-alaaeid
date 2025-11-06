@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Car, MessageCircle, Heart, Calendar, Search, Menu, X, User } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { Car, MessageCircle, Heart, Calendar, Search, Menu, X, User, LogOut, LogIn } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +87,15 @@ export default function Header() {
             </Link>
 
             <Link
+              href="/bookings"
+              className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 font-medium transition-colors duration-300 relative group"
+            >
+              <Calendar className="h-4 w-4" />
+              <span>My Bookings</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all group-hover:w-full"></span>
+            </Link>
+
+            <Link
               href="/test-drives"
               className="flex items-center space-x-1 text-gray-700 hover:text-green-500 font-medium transition-colors duration-300 relative group"
             >
@@ -102,10 +113,49 @@ export default function Header() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
             </Link>
 
-            {/* User Profile Button */}
-            {/* <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-300">
-              <User className="h-5 w-5 text-gray-600" />
-            </button> */}
+            {/* Admin Dashboard Link - Only for admins */}
+            {session?.user?.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="flex items-center space-x-1 text-gray-700 hover:text-red-500 font-medium transition-colors duration-300 relative group"
+              >
+                <User className="h-4 w-4" />
+                <span>Admin</span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all group-hover:w-full"></span>
+              </Link>
+            )}
+
+            {/* Auth Buttons */}
+            {status === 'loading' ? (
+              <div className="animate-pulse bg-gray-200 rounded-full h-8 w-8"></div>
+            ) : session ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-700">Welcome, {session.user?.name}</span>
+                <button
+                  onClick={() => signOut()}
+                  className="flex items-center space-x-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/auth/signin"
+                  className="flex items-center space-x-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-300"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-300"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -154,6 +204,15 @@ export default function Header() {
               </Link>
 
               <Link
+                href="/bookings"
+                className="flex items-center space-x-2 text-gray-700 hover:text-orange-500 font-medium py-2 px-3 rounded-md hover:bg-gray-50 transition-colors duration-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Calendar className="h-4 w-4" />
+                <span>My Bookings</span>
+              </Link>
+
+              <Link
                 href="/test-drives"
                 className="flex items-center space-x-2 text-gray-700 hover:text-green-500 font-medium py-2 px-3 rounded-md hover:bg-gray-50 transition-colors duration-300"
                 onClick={() => setIsMenuOpen(false)}
@@ -171,11 +230,39 @@ export default function Header() {
                 <span>Chat</span>
               </Link>
 
-              {/* Mobile User Profile */}
-              <div className="flex items-center space-x-2 text-gray-700 py-2 px-3">
-                <User className="h-4 w-4" />
-                <span>Profile</span>
-              </div>
+              {/* Mobile Auth */}
+              {status === 'loading' ? (
+                <div className="animate-pulse bg-gray-200 rounded h-8 w-20"></div>
+              ) : session ? (
+                <div className="flex flex-col space-y-2">
+                  <span className="text-sm text-gray-700 py-2 px-3">Welcome, {session.user?.name}</span>
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center space-x-2 text-red-600 hover:text-red-700 font-medium py-2 px-3 rounded-md hover:bg-red-50 transition-colors duration-300"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-2">
+                  <Link
+                    href="/auth/signin"
+                    className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 font-medium py-2 px-3 rounded-md hover:bg-purple-50 transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    <span>Sign In</span>
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="text-gray-700 hover:text-purple-600 font-medium py-2 px-3 rounded-md hover:bg-gray-50 transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         )}
