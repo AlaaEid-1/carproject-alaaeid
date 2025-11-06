@@ -25,7 +25,7 @@
 - [ ] Create messaging API routes
 
 ## 5. Additional Features
-- [ ] Admin dashboard: Manage cars, users, bookings
+- [x] Admin dashboard: Manage cars, users, bookings
 - [ ] Make reviews user-specific
 - [ ] Add dark mode toggle
 - [ ] Notifications for booking confirmations
