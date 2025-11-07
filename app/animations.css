@@ -1,20 +1,18 @@
-@layer utilities {
-  .animate-scroll {
-    animation: scroll 30s linear infinite;
-  }
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
 
-  .animate-fade-in {
-    animation: fadeIn 1s ease-out forwards;
-    opacity: 0;
-  }
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+  opacity: 0;
+}
 
-  .animation-delay-200 {
-    animation-delay: 0.2s;
-  }
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
 
-  .animation-delay-400 {
-    animation-delay: 0.4s;
-  }
+.animation-delay-400 {
+  animation-delay: 0.4s;
 }
 
 @keyframes scroll {
