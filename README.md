@@ -1,6 +1,6 @@
 # AlaaExplorion
 
-AlaaExplorion is a modern, full-stack web application for exploring and discovering cars. Built with Next.js and TypeScript, it offers a seamless experience for browsing, searching, and managing favorite vehicles, along with features like test drive scheduling and an integrated chatbot.
+AlaaExplorion is a modern, full-stack web application for exploring and discovering cars. Built with Next.js and TypeScript, it offers a seamless experience for browsing, searching, and managing favorite vehicles, along with features like test drive scheduling and an integrated chatbot .
 
 ## Features
 
